@@ -3,13 +3,13 @@
 > Docker is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all of the parts it needs, such as libraries and other dependencies, and ship it all out as one package. 
 
 
-### About me
+## About me
 
- - **Andrii Chyzh** 
+ - Andrii Chyzh
  - Team Leader / Senior Software Engineer @ Wix.com
  
  
-### Reference
+## Reference
 
  - [The Twelve-Factors Apps](https://12factor.net/)
  - [Docker Recommendation](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
@@ -17,7 +17,7 @@
 
 ## Image size
 
-#### Use base images with minimal size
+### Use base images with minimal size
  
 ```
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
@@ -27,7 +27,7 @@ centos              latest              75835a67d134        5 weeks ago         
 alpine              latest              196d12cf6ab1        2 months ago        4.41MB
 ``` 
 
-#### Don’t install unnecessary packages and remove not required
+### Don’t install unnecessary packages and remove not required
 
 ```dockerfile
 RUN apt-get -y install curl && \
@@ -35,7 +35,7 @@ RUN apt-get -y install curl && \
     apt-get remove -y --purge curl
 ```
 
-#### Sort multi-line arguments
+### Sort multi-line arguments
 
 ```dockerfile
 RUN apt-get -y install \
@@ -45,7 +45,7 @@ RUN apt-get -y install \
     wget
 ```
 
-#### Use `.dockerignore` in every project, where you are building Docker images
+### Use `.dockerignore` in every project, where you are building Docker images
 
 ```
 .git
@@ -59,13 +59,13 @@ docker-compose.yml
 docs
 ```
 
-#### Create own base images for yours company use cases
+### Create own base images for yours company use cases
 
 ```
 FROM company-name/bootstrap-onbuild:latest
 ```
 
-#### Minimize the number of layers (instructions `RUN`, `COPY`, `ADD` creates layers) and use `multi-stage` builds
+### Minimize the number of layers (instructions `RUN`, `COPY`, `ADD` creates layers) and use `multi-stage` builds
 
 
 #### Case: [OpenResty](https://openresty.org/en/) (Nginx + Lua)
@@ -272,4 +272,4 @@ HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost/ || exit 1
 
 ## Link
 
-![Link to repo](static/code.png)
+<img src="static/code.png" width="450" height="450" />
