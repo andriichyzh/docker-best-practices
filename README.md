@@ -206,16 +206,68 @@ goapp               multistage          bb6ce614ba3d        13 seconds ago      
 
 ### Start / stop
 
+#### Use start app with init all required resources
+
+ - pp starts (npm start)
+ - App opens DB connections
+ - App listens on port
+ - App tells the load balancer that it’s ready for requests
+
+#### Use SIGTERM signal for graceful shutdown stop of app
+
+> The docker stop command attempts to stop a running container first by sending a `SIGTERM` signal to the root process (PID 1) in the container. If the process hasn't exited within the timeout period a `SIGKILL` signal will be sent.
+  
+ - App gets notification to stop (received `SIGTERM`)
+ - App lets know the load balancer that it’s not ready for newer requests
+ - App served all the ongoing requests
+ - App releases all of the resources correctly: DB, queue, etc.
+ - App exits with "success" status code (process.exit())
+
+
+### Runtime
+
+#### Use `health` endpoints 
+
+![kubernetes](static/kubernetes-graceful-shutdown-flowchart.png)
+
+ - Pod receives SIGTERM signal because Kubernetes wants to stop it - because of deploy, scale, etc.
+ - App (pod) starts to return 500 for GET /health to let readinessProbe (Service) know that it's not ready to receive more requests.
+ - Kubernetes readinessProbe checks GET /health and after (failureThreshold * periodSecond) it stops redirecting traffic to the app (because it continuously returns 500)
+ - App waits (failureThreshold * periodSecond) before it starts to shut down - to make sure that the Service is getting notified via readinessProbe fail
+ - App starts graceful shutdown
+ - App first closes server with live working DB connections
+ - App closes databases after the server is closed
+ - App exits process
+ - Kubernetes force kills the application after 30s (SIGKILL) if it's still running (in an optimal case it doesn't happen)
+
+#### Use internal `HEALTHCHECK` instruction
+
+```
+HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost/ || exit 1
+```
+
+#### In app use retries of connections or requests to external
+
+ - Re-connect for databases and storages (MongoDB, Redis, Kafka etc)
+ - Use retries with `exponential backoff` strategy for all HTTP requests to external 
+
 
 ### Configuration 
+
+ - Store config in the environment
+ - Use env variables
+ - Can use database for storing and updating settings without reload of app
 
 
 ### Logging
 
+ - Use `STDOUT` and `STDERR` for logging
+ - Use common format for logs (some structure, JSON etc)
+
 
 ### Docker Compose
 
-
+ - Use [startup-order](https://docs.docker.com/compose/startup-order/)
 
 
 ## Link
