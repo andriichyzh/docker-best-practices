@@ -220,4 +220,4 @@ goapp               multistage          bb6ce614ba3d        13 seconds ago      
 
 ## Link
 
-![Link to repo](static/code.png)
+<img src="static/code.png" width="450" height="450" />
