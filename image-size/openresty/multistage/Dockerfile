@@ -1,12 +1,12 @@
 FROM debian:stretch-slim AS installer
 
 RUN apt-get -y update && \
-    apt-get -y install software-properties-common gnupg2 wget lsb-release && \
+    apt-get -y install gnupg2 lsb-release software-properties-common wget && \
     wget -qO - https://openresty.org/package/pubkey.gpg | apt-key add - && \
     add-apt-repository -y "deb http://openresty.org/package/debian $(lsb_release -sc) openresty" && \
     apt-get update && \
     apt-get -y install openresty && \
-    apt-get remove -y --purge software-properties-common gnupg2 wget lsb-release && \
+    apt-get remove -y --purge gnupg2 lsb-release software-properties-common wget && \
     apt-get -y autoremove && \
     rm -rf /var/lib/apt/lists/*
 
